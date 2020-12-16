@@ -1,17 +1,39 @@
-FROM nnurphy/deb
+FROM ubuntu:20.04
+#https://github.com/mbari-org/docker-polynote/blob/master/Dockerfile.jdk11
 
-ENV JAVA_VERSION=11 JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 \
-    SCALA_HOME=/opt/scala SCALA_VERSION=2.13.0
-ENV PATH=${SCALA_HOME}/bin:$PATH
+WORKDIR /opt
 
-RUN set -ex \
-  ; apt-get update \
-  ; apt-get -y --no-install-recommends install openjdk-${JAVA_VERSION}-jdk \
-  ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+ARG DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED TRUE
 
-RUN set -ex \
-  ; mkdir -p /usr/share/man/man1 \
-  ; mkdir -p ${SCALA_HOME} \
-  ; wget -q -O- https://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz \
-      | tar xzf - -C ${SCALA_HOME} --strip-components=1
-  #; rm -rf ${HOME}/.cache/coursier/*
+RUN apt-get update \
+  && apt-get install -y \
+     build-essential \
+     curl \
+     default-jdk \
+     python3 \
+     python3-pip
+
+ENV JAVA_HOME /usr/lib/jvm/default-java/
+RUN pip3 install \
+  jep \
+  jedi \
+  pyspark==3.0.1 \
+  virtualenv \
+  numpy \
+  pandas
+
+# Install polynote, spark, and then cleanup
+RUN curl -L https://github.com/polynote/polynote/releases/download/0.3.12/polynote-dist-2.12.tar.gz | tar -xzvpf -
+RUN curl -L http://apache.claz.org/spark/spark-3.0.1/spark-3.0.1-bin-hadoop3.2.tgz | tar -xzvpf - \
+  && mv spark* spark
+
+ENV PYSPARK_ALLOW_INSECURE_GATEWAY 1
+ENV SPARK_HOME /opt/spark
+ENV PATH "$PATH:$JAVA_HOME/bin:$SPARK_HOME/bin:$SPARK_HOME/sbin"
+
+COPY config.yml ./polynote/config.yml
+
+EXPOSE 8192
+
+CMD polynote/polynote.py
