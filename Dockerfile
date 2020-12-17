@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:focal
 #https://github.com/mbari-org/docker-polynote/blob/master/Dockerfile.jdk11
 
 WORKDIR /opt
@@ -6,22 +6,25 @@ WORKDIR /opt
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED TRUE
 
-RUN apt-get update \
-  && apt-get install -y \
-     build-essential \
-     curl \
-     default-jdk \
-     python3 \
-     python3-pip
+RUN cp /etc/apt/sources.list /etc/apt/sources.list.$(date +%y%m%d%H%M%S) \
+ && sed -i 's/\(archive\|security\).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list \
+ && apt-get update \
+ && apt-get install -y \
+      build-essential \
+      curl \
+      default-jdk \
+      python3 \
+      python3-pip
 
 ENV JAVA_HOME /usr/lib/jvm/default-java/
-RUN pip3 install \
-  jep \
-  jedi \
-  pyspark==3.0.1 \
-  virtualenv \
-  numpy \
-  pandas
+RUN pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
+ && pip3 install \
+      jep \
+      jedi \
+      pyspark==3.0.1 \
+      virtualenv \
+      numpy \
+      pandas
 
 # Install polynote, spark, and then cleanup
 RUN curl -L https://github.com/polynote/polynote/releases/download/0.3.12/polynote-dist-2.12.tar.gz | tar -xzvpf -
