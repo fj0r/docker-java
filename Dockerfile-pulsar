@@ -30,7 +30,7 @@ RUN set -eux \
 
 ENV just_version=0.8.3
 ENV watchexec_version=1.14.1
-ENV yq_version=4.2.0
+ENV yq_version=4.2.1
 ENV websocat_version=1.6.0
 ENV wasmtime_version=0.21.0
 
