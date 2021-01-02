@@ -1,5 +1,4 @@
-ARG JDK_VERSION=11
-FROM openjdk:${JDK_VERSION}-jre-slim
+FROM openjdk:11-slim
 
 ARG NVIM_VERSION
 ARG nvim_url=https://github.com/neovim/neovim/releases/download/${NVIM_VERSION:-nightly}/nvim-linux64.tar.gz
@@ -9,12 +8,12 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-      locales tzdata ca-certificates pwgen \
-      inetutils-ping net-tools iproute2 \
-      sudo mlocate procps zstd unzip tree \
-      curl wget tcpdump socat rsync jq \
-      bash zsh git build-essential tmux \
-      openssh-client openssh-server gnupg \
+      locales tzdata sudo ca-certificates pwgen \
+      openssh-client openssh-server gnupg rsync \
+      inetutils-ping net-tools iproute2 iptables \
+      mlocate procps xz-utils zstd unzip tree \
+      zsh git curl wget tcpdump socat jq ripgrep \
+      python3 python3-pip python3-setuptools ipython3 \
   ; ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   ; echo "$TIMEZONE" > /etc/timezone \
   ; sed -i /etc/locale.gen \
@@ -83,6 +82,3 @@ RUN set -ex \
         +'CocInstall -sync coc-hightlight' \
         +qa
 
-WORKDIR /pulsar
-ENV PATH=/pulsar/bin:$PATH
-ADD ./pulsar270.tar.gz /pulsar
