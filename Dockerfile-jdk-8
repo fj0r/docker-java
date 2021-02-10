@@ -14,7 +14,8 @@ RUN set -eux \
   ; do nvim -u /etc/skel/.config/nvim/init.vim --headless +"CocInstall -sync coc-$x" +qa; done \
   \
   ; mkdir -p /opt/language-server/java \
-  ; curl https://download.eclipse.org/jdtls/snapshots/jdt-language-server-0.68.0-202012242230.tar.gz \
+  ; jdtls_latest=$(curl https://download.eclipse.org/jdtls/snapshots/latest.txt) \
+  ; curl https://download.eclipse.org/jdtls/snapshots/${jdtls_latest} \
     | tar --no-same-owner -zxf - -C /opt/language-server/java \
   ; echo "let g:coc_user_config['java.jdt.ls.home'] = '/opt/language-server/java'" >> /etc/skel/.config/nvim/config.coc/lsp.vim \
   \
