@@ -8,6 +8,7 @@ RUN set -eux \
       build-essential openjdk-8-jdk \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
+ENV JAVA_HOME=/usr
 RUN set -eux \
   ; for x in java metals \
   ; do nvim -u /etc/skel/.config/nvim/init.vim --headless +"CocInstall -sync coc-$x" +qa; done \
@@ -36,5 +37,5 @@ ARG mill_repo=lihaoyi/mill
 RUN set -eux \
   ; mill_version=$(curl -sSL -H "'$github_header'" $github_api/${mill_repo}/releases | jq -r '.[0].tag_name') \
   ; curl -L https://github.com/lihaoyi/mill/releases/download/${mill_version}/${mill_version} > /usr/local/bin/mill \
-  ; chmod +x /usr/local/bin/mill \
+  ; chmod +x /usr/local/bin/mill
 
