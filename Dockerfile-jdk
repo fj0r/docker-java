@@ -54,3 +54,4 @@ RUN set -eux \
       -r bintray:scalacenter/releases \
       -r sonatype:snapshots \
       -o /usr/local/bin/metals-vim -f
+
