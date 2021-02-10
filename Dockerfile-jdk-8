@@ -24,7 +24,7 @@ RUN set -eux \
 ENV SCALA_HOME=/opt/scala
 ENV PATH=${SCALA_HOME}/bin:$PATH
 
-RUN set -ex \
+RUN set -eux \
   ; mkdir -p /usr/share/man/man1 \
   ; mkdir -p ${SCALA_HOME} \
   ; wget -qO- $(curl -sSL https://scala-lang.org/download/|pup '[id="#link-main-unixsys"] attr{href}') \
@@ -39,3 +39,18 @@ RUN set -eux \
   ; curl -L https://github.com/lihaoyi/mill/releases/download/${mill_version}/${mill_version} > /usr/local/bin/mill \
   ; chmod +x /usr/local/bin/mill
 
+ARG metals_repo=scalameta/metals
+
+RUN set -eux \
+  ; metals_version=$(curl -sSL -H "'$github_header'" $github_api/${metals_repo}/releases | jq -r '.[0].tag_name') \
+  ; echo $metals_version \
+  ; curl -L -o /usr/local/bin/coursier https://git.io/coursier-cli \
+  ; chmod +x /usr/local/bin/coursier \
+  ; coursier bootstrap \
+      --java-opt -Xss4m \
+      --java-opt -Xms100m \
+      --java-opt -Dmetals.client=vim-lsc \
+      org.scalameta:metals_2.13:0.9.10 \
+      -r bintray:scalacenter/releases \
+      -r sonatype:snapshots \
+      -o /usr/local/bin/metals-vim -f
