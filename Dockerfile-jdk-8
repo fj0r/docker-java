@@ -20,12 +20,21 @@ RUN set -eux \
   #; npm config set registry https://registry.npm.taobao.org \
   ; npm cache clean -f
 
-ENV SCALA_HOME=/opt/scala SCALA_VERSION=2.13.4
+ENV SCALA_HOME=/opt/scala
 ENV PATH=${SCALA_HOME}/bin:$PATH
 
 RUN set -ex \
   ; mkdir -p /usr/share/man/man1 \
   ; mkdir -p ${SCALA_HOME} \
-  ; wget -q -O- https://downloads.lightbend.com/scala/$SCALA_VERSION/scala-$SCALA_VERSION.tgz \
+  ; wget -qO- $(curl -sSL https://scala-lang.org/download/|pup '[id="#link-main-unixsys"] attr{href}') \
       | tar xzf - -C ${SCALA_HOME} --strip-components=1
-  #; rm -rf ${HOME}/.cache/coursier/*
+
+ARG github_header="Accept: application/vnd.github.v3+json"
+ARG github_api=https://api.github.com/repos
+ARG mill_repo=lihaoyi/mill
+
+RUN set -eux \
+  ; mill_version=$(curl -sSL -H "'$github_header'" $github_api/${mill_repo}/releases | jq -r '.[0].tag_name') \
+  ; curl -L https://github.com/lihaoyi/mill/releases/download/${mill_version}/${mill_version} > /usr/local/bin/mill \
+  ; chmod +x /usr/local/bin/mill \
+
