@@ -42,16 +42,11 @@ RUN set -eux \
 ARG metals_repo=scalameta/metals
 
 RUN set -eux \
-  ; metals_version=$(curl -sSL -H "'$github_header'" $github_api/${metals_repo}/releases | jq -r '.[0].tag_name') \
-  ; echo $metals_version \
-  ; curl -L -o /usr/local/bin/coursier https://git.io/coursier-cli \
-  ; chmod +x /usr/local/bin/coursier \
-  ; coursier bootstrap \
-      --java-opt -Xss4m \
-      --java-opt -Xms100m \
-      --java-opt -Dmetals.client=vim-lsc \
-      org.scalameta:metals_2.12:0.9.10 \
-      -r bintray:scalacenter/releases \
-      -r sonatype:snapshots \
-      -o /usr/local/bin/metals-vim -f
+  ; metals_version=$(curl -sSL -H "'$github_header'" $github_api/${metals_repo}/releases | jq -r '.[0].tag_name'|cut -c 2-) \
+  ; java -Dfile.encoding=UTF-8 -jar \
+    /etc/skel/.config/nvim/coc-data/extensions/node_modules/coc-metals/coursier \
+    fetch -p --ttl Inf org.scalameta:metals_2.12:${metals_version} \
+    -r bintray:scalacenter/releases \
+    -r sonatype:public \
+    -r sonatype:snapshots -p
 
