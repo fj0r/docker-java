@@ -16,20 +16,28 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.$(date +%y%m%d%H%M%S) \
       python3 \
       python3-pip
 
-ENV JAVA_HOME /usr/lib/jvm/default-java/
 RUN pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple \
- && pip3 install \
+
+ARG github_header="Accept: application/vnd.github.v3+json"
+ARG github_api=https://api.github.com/repos
+ARG spark_repo=apache/spark
+ARG polynote_repo=polynote/polynote
+
+WORKDIR /opt
+RUN set -eux \
+  ; spark_version=$(curl -sSL -H "'$github_header'" $github_api/${spark_repo}/releases | jq -r '.[0].tag_name'|cut -c 2-) \
+  ; spark_version=3.0.2 \
+  ; pip3 install \
       jep \
       jedi \
-      pyspark==3.0.1 \
+      pyspark==${spark_version} \
       virtualenv \
       numpy \
-      pandas
-
-# Install polynote, spark, and then cleanup
-RUN curl -L https://github.com/polynote/polynote/releases/download/0.3.12/polynote-dist-2.12.tar.gz | tar -xzvpf -
-RUN curl -L http://apache.claz.org/spark/spark-3.0.1/spark-3.0.1-bin-hadoop3.2.tgz | tar -xzvpf - \
-  && mv spark* spark
+      pandas \
+  ; curl -L http://apache.claz.org/spark/spark-{spark_version}/spark-${spark_version}-bin-hadoop3.2. tgz | tar -xzvpf - \
+  ; mv spark* /opt/spark \
+  ; polynote_version=$(curl -sSL -H "'$github_header'" $github_api/${polynote_repo}/releases | jq -r '.[0].tag_name') \
+  ; curl -L https://github.com/polynote/polynote/releases/download/${polynote_version}/polynote-dist.tar.gz | tar -xzvpf -
 
 ENV PYSPARK_ALLOW_INSECURE_GATEWAY 1
 ENV SPARK_HOME /opt/spark
@@ -39,4 +47,4 @@ COPY config.yml ./polynote/config.yml
 
 EXPOSE 8192
 
-CMD polynote/polynote.py
+CMD ["/opt/polynote/polynote.py"]

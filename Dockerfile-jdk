@@ -8,7 +8,7 @@ RUN set -eux \
       build-essential default-jdk \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# ENV JAVA_HOME=/usr
+ENV JAVA_HOME=/lib/jvm/default-java
 RUN set -eux \
   ; for x in java metals \
   ; do nvim -u /etc/skel/.config/nvim/init.vim --headless +"CocInstall -sync coc-$x" +qa; done \
