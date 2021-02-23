@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM nnurphy/jdk:11
 #https://github.com/mbari-org/docker-polynote/blob/master/Dockerfile.jdk11
 
 WORKDIR /opt
@@ -34,7 +34,7 @@ RUN set -eux \
       virtualenv \
       numpy \
       pandas \
-  ; curl -L http://apache.claz.org/spark/spark-{spark_version}/spark-${spark_version}-bin-hadoop3.2. tgz | tar -xzvpf - \
+  ; curl -L http://apache.claz.org/spark/spark-{spark_version}/spark-${spark_version}-bin-hadoop3.2.tgz | tar -xzvpf - \
   ; mv spark* /opt/spark \
   ; polynote_version=$(curl -sSL -H "'$github_header'" $github_api/${polynote_repo}/releases | jq -r '.[0].tag_name') \
   ; curl -L https://github.com/polynote/polynote/releases/download/${polynote_version}/polynote-dist.tar.gz | tar -xzvpf -
