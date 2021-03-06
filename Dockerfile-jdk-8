@@ -1,11 +1,12 @@
 FROM nnurphy/sid
 
 RUN set -eux \
+  ; DEBIAN_FRONTEND=noninteractive \
+  ; wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add - \
+  ; add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ \
   ; apt-get update \
   ; apt-get upgrade -y \
-  ; DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --no-install-recommends \
-      build-essential openjdk-8-jdk \
+  ; apt-get install -y --no-install-recommends adoptopenjdk-8-hotspot build-essential \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/lib/jvm/java-8-openjdk-amd64
