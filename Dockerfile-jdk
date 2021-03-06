@@ -5,7 +5,7 @@ RUN set -eux \
   ; apt-get upgrade -y \
   ; DEBIAN_FRONTEND=noninteractive \
     apt-get install -y --no-install-recommends \
-      build-essential default-jdk \
+      openjdk-11-jdk \
   ; apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/lib/jvm/default-java

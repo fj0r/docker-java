@@ -1,4 +1,4 @@
-FROM nnurphy/jdk:8
+FROM nnurphy/jdk:11
 
 WORKDIR /pulsar
 ENV PATH=/pulsar/bin:$PATH
