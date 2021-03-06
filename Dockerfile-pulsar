@@ -13,7 +13,7 @@ RUN set -eux \
   \
   ; pulsarctl_version=$(curl -sSL -H "'$github_header'" $github_api/${pulsarctl_repo}/releases | jq -r '.[0].tag_name') \
   ; pulsarctl_url=https://github.com/${pulsarctl_repo}/releases/download/${pulsarctl_version}/pulsarctl-amd64-linux.tar.gz \
-  ; curl -sSL ${pulsarctl_url} | tar zxf - -C /usr/local/bin --strip-components=1 \
-  \
-  ; pip3 --default-timeout=100 --no-cache-dir install pulsar-client==${pulsar_version} \
-  ; pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+  ; curl -sSL ${pulsarctl_url} | tar zxf - -C /usr/local/bin --strip-components=1
+  # \
+  # ; pip3 --default-timeout=100 --no-cache-dir install pulsar-client==${pulsar_version} \
+  # ; pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
