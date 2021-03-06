@@ -1,4 +1,4 @@
-FROM nnurphy/ub:latest
+FROM nnurphy/sid
 
 RUN set -eux \
   ; apt-get update \
