@@ -2,7 +2,7 @@ FROM nnurphy/io
 
 RUN set -eux \
   ; DEBIAN_FRONTEND=noninteractive \
-  ; wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add - \
+  ; curl -sSL https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add - \
   ; add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ \
   ; apt-get update \
   ; apt-get upgrade -y \
@@ -28,7 +28,7 @@ ENV PATH=${SCALA_HOME}/bin:$PATH
 RUN set -eux \
   ; mkdir -p /usr/share/man/man1 \
   ; mkdir -p ${SCALA_HOME} \
-  ; wget -qO- $(curl -sSL https://scala-lang.org/download/|pup '[id="#link-main-unixsys"] attr{href}') \
+  ; curl -sSL $(curl -sSL https://scala-lang.org/download/|pup '[id="#link-main-unixsys"] attr{href}') \
       | tar xzf - -C ${SCALA_HOME} --strip-components=1
 
 ARG github_header="Accept: application/vnd.github.v3+json"
