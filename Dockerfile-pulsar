@@ -1,4 +1,4 @@
-FROM nashv1/jdk:11
+FROM fj0rd/java:11
 
 WORKDIR /pulsar
 ENV PATH=/pulsar/bin:$PATH
