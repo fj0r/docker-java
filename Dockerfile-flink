@@ -1,4 +1,4 @@
-FROM nnurphy/jdk:11
+FROM nashv1/jdk:11
 
 # Install dependencies
 RUN set -ex; \
