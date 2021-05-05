@@ -12,14 +12,10 @@ RUN set -eux \
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 
 RUN set -eux \
-  ; for x in java metals \
-  ; do nvim -u /etc/skel/.config/nvim/init.vim --headless +"CocInstall -sync coc-$x" +qa; done \
-  \
-  ; mkdir -p /opt/language-server/java \
+  ; mkdir -p /opt/language-server/jdtls \
   ; jdtls_latest=$(curl https://download.eclipse.org/jdtls/snapshots/latest.txt) \
   ; curl https://download.eclipse.org/jdtls/snapshots/${jdtls_latest} \
-    | tar --no-same-owner -zxf - -C /opt/language-server/java \
-  ; echo "let g:coc_user_config['java.jdt.ls.home'] = '/opt/language-server/java'" >> /etc/skel/.config/nvim/config.coc/lsp.vim \
+    | tar --no-same-owner -zxf - -C /opt/language-server/jdtls \
   \
   ; npm cache clean -f
 
@@ -44,11 +40,14 @@ RUN set -eux \
 ARG metals_repo=scalameta/metals
 
 RUN set -eux \
+  ; curl -fLo /usr/local/bin/cs https://git.io/coursier-cli-"$(uname | tr LD ld)" \
+  ; chmod +x /usr/local/bin/cs \
   ; metals_version=$(curl -sSL -H "'$github_header'" $github_api/${metals_repo}/releases | jq -r '.[0].tag_name'|cut -c 2-) \
-  ; java -Dfile.encoding=UTF-8 -jar \
-    /etc/skel/.config/nvim/coc-data/extensions/node_modules/coc-metals/coursier \
-    fetch -p --ttl Inf org.scalameta:metals_2.12:${metals_version} \
-    -r bintray:scalacenter/releases \
-    -r sonatype:public \
-    -r sonatype:snapshots -p
+  ; cs bootstrap \
+  --java-opt -Xss4m \
+  --java-opt -Xms100m \
+  org.scalameta:metals_2.12:${metals_version} \
+  -r bintray:scalacenter/releases \
+  -r sonatype:snapshots \
+  -o /usr/local/bin/metals -f
 
