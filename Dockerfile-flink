@@ -26,7 +26,7 @@ RUN set -ex; \
   gosu nobody true
 
 # Configure Flink version
-ENV FLINK_TGZ_URL=https://apache.osuosl.org/flink/flink-1.13.0/flink-1.13.0-bin-scala_2.12.tgz
+ENV FLINK_TGZ_URL=https://www.apache.org/dyn/closer.lua/flink/flink-1.13.1/flink-1.13.1-bin-scala_2.12.tgz
 # Prepare environment
 ENV FLINK_HOME=/opt/flink
 ENV PATH=$FLINK_HOME/bin:$PATH
